@@ -47,4 +47,59 @@ jobs:
 
 ## How it works
 
-Everytime somebody opens a Pull Request, the action runs [Foundry](https://github.com/foundry-rs/foundry) `forge` to generate automated documentation based on the NATSPECs of your contracts.
+Everytime somebody opens a Pull Request, the action runs [Foundry](https://github.com/foundry-rs/foundry) `forge` to generate automated documentation based on the NATSPECs of your contracts, and uploads the generated book to the given S3 bucket, via the given AWS credentials.
+
+### AWS IAM Credentials minimum authorization
+
+Your credentials must have s3 sync autorization attached. The minimum policies required can be set with the following `policy.json` file:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "s3:DeleteObject",
+        "s3:GetBucketLocation",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:ListObjectsV2"
+      ],
+      "Resource": ["arn:aws:s3:::<your-bucket>", "arn:aws:s3:::<your-bucket>/*"]
+    },
+    {
+      "Sid": "VisualEditor1",
+      "Effect": "Allow",
+      "Action": ["s3:ListAllMyBuckets"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+If you are serving the book through CloudFront, you can optionnally give authorization to invalidate the cache in order to immediately serve changes:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor2",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:GetDistribution",
+        "cloudfront:ListInvalidations",
+        "cloudfront:GetInvalidation",
+        "cloudfront:CreateInvalidation"
+      ],
+      "Resource": "<distribution-arn>"
+    }
+  ]
+}
+```
+
+Then just provide the CloudFront distribution id as input to the action with key `aws-cloudfront-distribution-id`
