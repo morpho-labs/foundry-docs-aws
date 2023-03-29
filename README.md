@@ -48,3 +48,60 @@ jobs:
 ## How it works
 
 Everytime somebody opens a Pull Request, the action runs [Foundry](https://github.com/foundry-rs/foundry) `forge` to generate automated documentation based on the NATSPECs of your contracts.
+
+
+## AWS IAM Credentials
+
+Your credentials must have s3 sync autorization attached. The minimum policies to have are setted in the following `policy.json` file:
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:DeleteObject",
+                "s3:GetBucketLocation",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:ListObjectsV2"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<your-bucket>",
+                "arn:aws:s3:::<your-bucket>/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+As option, if you are distributing the documentation through CloudFront you can give authorization to invalidate the cache in order to reflect changes in the web:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "cloudfront:GetDistribution",
+                "cloudfront:ListInvalidations",
+                "cloudfront:GetInvalidation",
+                "cloudfront:CreateInvalidation"
+            ],
+            "Resource": "<distribution-arn>"
+        }
+    ]
+}
+```
