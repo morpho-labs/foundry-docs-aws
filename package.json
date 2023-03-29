@@ -1,0 +1,41 @@
+{
+  "name": "foundry-docs-aws",
+  "version": "1.0.0",
+  "description": "Github Action generating the automated foundry docs and uploading them to an AWS bucket",
+  "author": {
+    "name": "Romain (Rubilmax) Milon",
+    "email": "rmilon@gmail.com",
+    "url": "https://github.com/rubilmax"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "postinstall": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morpho-labs/foundry-docs-aws.git"
+  },
+  "bugs": {
+    "url": "https://github.com/morpho-labs/foundry-docs-aws/issues"
+  },
+  "homepage": "https://github.com/morpho-labs/foundry-docs-aws#readme",
+  "keywords": [
+    "foundry",
+    "forge",
+    "docs",
+    "documentation",
+    "aws",
+    "solidity",
+    "developer",
+    "action",
+    "ci"
+  ],
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "prettier": "^2.8.7"
+  },
+  "lint-staged": {
+    "*.yml": "yarn prettier"
+  }
+}
