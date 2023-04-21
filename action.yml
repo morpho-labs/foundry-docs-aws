@@ -14,15 +14,24 @@ inputs:
     required: false
   aws-access-key-id:
     description: >-
-      AWS Access Key ID. This input is required if running in the GitHub hosted environment.
+      AWS Access Key ID. This input is required if running in the GitHub hosted environment accessible using an IAM user.
       It is optional if running in a self-hosted environment that already has AWS credentials,
       for example on an EC2 instance.
     required: false
   aws-secret-access-key:
     description: >-
-      AWS Secret Access Key. This input is required if running in the GitHub hosted environment.
+      AWS Secret Access Key. This input is required if running in the GitHub hosted environment accessible using an IAM user.
       It is optional if running in a self-hosted environment that already has AWS credentials,
       for example on an EC2 instance.
+    required: false
+  aws-role-to-assume:
+    description: >-
+      AWS Role to assume. This input is required if running in the GitHub hosted environment with role based authentication.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: false
+  aws-role-session-name:
+    description: "AWS Role Session Name"
     required: false
   aws-session-token:
     description: "AWS Session Token"
@@ -30,12 +39,16 @@ inputs:
   aws-region:
     description: "AWS Region, e.g. us-east-2"
     required: true
+  s3-acl:
+    description: "S3 ACL, e.g. public-read or private"
+    required: false
+    default: private
 
 runs:
   using: composite
 
   steps:
-    - name:
+    - name: Setup Node
       uses: actions/setup-node@v3
       with:
         node-version: 16
@@ -65,11 +78,14 @@ runs:
       with:
         aws-access-key-id: ${{ inputs.aws-access-key-id }}
         aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-role-to-assume: ${{ inputs.aws-role-to-assume }}
+        aws-role-session-name: ${{ inputs.aws-role-session-name }}
         aws-session-token: ${{ inputs.aws-session-token }}
         aws-region: ${{ inputs.aws-region }}
 
+
     - name: Upload docs to S3
-      run: aws s3 sync docs/book/ s3://${{ inputs.aws-s3-bucket }} --delete --acl public-read
+      run: aws s3 sync docs/book/ s3://${{ inputs.aws-s3-bucket }} --delete --acl ${{ inputs.s3-acl }}
       shell: bash
 
     - name: Invalidate CloudFront cache
