@@ -24,13 +24,13 @@ inputs:
       It is optional if running in a self-hosted environment that already has AWS credentials,
       for example on an EC2 instance.
     required: false
-  aws-role-to-assume:
+  role-to-assume:
     description: >-
       AWS Role to assume. This input is required if running in the GitHub hosted environment with role based authentication.
       It is optional if running in a self-hosted environment that already has AWS credentials,
       for example on an EC2 instance.
     required: false
-  aws-role-session-name:
+  role-session-name:
     description: "AWS Role Session Name"
     required: false
   aws-session-token:
@@ -78,8 +78,8 @@ runs:
       with:
         aws-access-key-id: ${{ inputs.aws-access-key-id }}
         aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-        aws-role-to-assume: ${{ inputs.aws-role-to-assume }}
-        aws-role-session-name: ${{ inputs.aws-role-session-name }}
+        role-to-assume: ${{ inputs.role-to-assume }}
+        role-session-name: ${{ inputs.role-session-name }}
         aws-session-token: ${{ inputs.aws-session-token }}
         aws-region: ${{ inputs.aws-region }}
 
